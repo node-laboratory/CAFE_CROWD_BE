@@ -1,0 +1,19 @@
+services:
+  app:
+    # Local: APP_IMAGE 미설정 시 ./Dockerfile로 빌드
+    # EC2: APP_IMAGE=<ECR URI>:<tag> 후 docker compose pull && up -d
+    image: ${APP_IMAGE:-cafe-crowd-be:local}
+    build: .
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      # 로컬: 호스트의 postgres 접근 시 host.docker.internal 사용
+      # 운영: RDS endpoint (예: jdbc:postgresql://<rds>.ap-northeast-2.rds.amazonaws.com:5432/cafecrowd)
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      NAVER_SEARCH_CLIENT_ID: ${NAVER_SEARCH_CLIENT_ID:-}
+      NAVER_SEARCH_CLIENT_SECRET: ${NAVER_SEARCH_CLIENT_SECRET:-}
+      ADMIN_BEARER_TOKEN: ${ADMIN_BEARER_TOKEN:-changeme}
+    ports:
+      - "8080:8080"
